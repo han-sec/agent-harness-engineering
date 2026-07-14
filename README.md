@@ -11,6 +11,28 @@ This document is the single source of truth for the course. Every lesson, concep
 | **Philosophy** | No frameworks until you understand the loop underneath |
 | **Format** | One concept per file → run → read → break → fix |
 
+### Repository layout
+
+Lessons live in two folders — work through `section_1` in order, then `section_2`:
+
+```
+section_1/          # Lessons 01–06 — LLM mechanics + agent loop
+  01_chat.py
+  02_stream.py
+  03_conversation.py
+  04_tools.py
+  05_multi_tools.py
+  06_structured_output.py
+  06_appendix_bad_prompt.py   # optional — same lesson, vague prompt (compare parse success)
+
+section_2/          # Lessons 07+ — errors, context, files, production (as you add them)
+  07_error_handling.py
+  08a_token_estimate.py
+  08b_context_management.py
+```
+
+See [AGENTS.md](AGENTS.md) for conventions when adding new lessons.
+
 ---
 
 ## Table of contents
@@ -133,7 +155,7 @@ flowchart TB
 
 ### Common confusion
 
-| State | Can you chat in the app? | Can `01_chat.py` work? |
+| State | Can you chat in the app? | Can `section_1/01_chat.py` work? |
 |-------|--------------------------|------------------------|
 | App open, nothing loaded | ❌ | ❌ |
 | Model loaded, server **off** | ✅ (`lms chat` works) | ❌ Connection refused |
@@ -198,7 +220,7 @@ sequenceDiagram
 | Your code (parsed) | `str` | `"Hi"` → joined into `"Hi there!"` |
 | Tool result | `str` | `"Sunny, 28°C in Tokyo"` → fed back as Observation |
 
-**You never see token IDs** in this course. The API abstracts them into text. (Optional lesson `05_chat_stream_visualization.py` lets you inspect the bytes/str layers.)
+**You never see token IDs** in this course. The API abstracts them into text. Lesson `08a_token_estimate.py` introduces a rough token count so you can see prompt size before trimming.
 
 ### Chatbot vs agent pipeline
 
@@ -260,7 +282,8 @@ flowchart LR
     end
     subgraph P3["Phase 3 — Agent behaviors"]
         C1["07 errors"]
-        C2["08 context"]
+        C2["08a tokens"]
+        C2b["08b trim"]
         C3["09 planning"]
         C4["10 file agent"]
         C5["11 web agent"]
@@ -276,6 +299,8 @@ flowchart LR
     P1 --> P2 --> P3 --> P4
 ```
 
+**Folder mapping:** Phase 1–2 → `section_1/` (lessons 01–06). Phase 3–4 → `section_2/` (07 onward). Lessons 09–17 are planned; add them to `section_2/` as you build.
+
 | Phase | Theme | Outcome |
 |-------|-------|---------|
 | **1** | LLM mechanics | You understand HTTP, streaming, and memory |
@@ -287,10 +312,10 @@ flowchart LR
 
 | Week | Lessons | Goal |
 |------|---------|------|
-| 1 | `01`–`06` | Solid chat + tool agent |
-| 2 | `07`–`10` | Reliable file agent |
-| 3 | `11`–`15` | Production patterns |
-| 4 | `16`–`17` + capstone | Ship the research assistant |
+| 1 | `section_1/01`–`06` | Solid chat + tool agent |
+| 2 | `section_2/07`–`08b`, then `09`–`10` | Resilient agent + file tools |
+| 3 | `section_2/11`–`15` | Production patterns |
+| 4 | `section_2/16`–`17` + capstone | Ship the research assistant |
 
 ---
 
@@ -306,9 +331,9 @@ flowchart LR
 
 | File | Concepts | Checkpoint |
 |------|----------|------------|
-| `01_chat.py` | HTTP POST, JSON body, `messages` roles, `temperature`, reading `choices[0].message.content` | Explain the request body fields without looking at code |
-| `02_stream.py` | `stream: true`, SSE format, `data: {json}`, `data: [DONE]`, printing tokens live | Describe why streaming feels faster even though total time is similar |
-| `03_conversation.py` | `history` list, appending user/assistant messages, sending full history each call | Explain why the model "remembers" without any database |
+| `section_1/01_chat.py` | HTTP POST, JSON body, `messages` roles, `temperature`, reading `choices[0].message.content` | Explain the request body fields without looking at code |
+| `section_1/02_stream.py` | `stream: true`, SSE format, `data: {json}`, `data: [DONE]`, printing tokens live | Describe why streaming feels faster even though total time is similar |
+| `section_1/03_conversation.py` | `history` list, appending user/assistant messages, sending full history each call | Explain why the model "remembers" without any database |
 
 **Phase 1 checkpoint:** Trace this path from memory: `dict` → `json.dumps` → `bytes` → HTTP → SSE chunks → `str` → print.
 
@@ -320,10 +345,10 @@ flowchart LR
 
 | File | Concepts | Checkpoint |
 |------|----------|------------|
-| `04_tools.py` | Tool functions, `TOOLS` registry, system prompt contract, `TOOL:name:arg`, agent inner loop, `Observation`, defensive `re.search` | Explain who "decides" to call a tool (model vs Python) |
-| `05_multi_tool.py` | Multiple tools, model chooses which one, `calculate`, `get_time` | Add a new tool yourself without help |
-| `06_structured_output.py` | JSON-only responses, `json.loads`, retry on parse failure | Get reliable `{"city": "Tokyo"}` from a messy model |
-| `06b_native_tools.py` | LM Studio `tools` API param, structured `tool_calls` response (optional) | Compare native vs prompt-based on the same task |
+| `section_1/04_tools.py` | Tool functions, `TOOLS` registry, system prompt contract, `TOOL:name:arg`, agent inner loop, `Observation`, defensive `re.search` | Explain who "decides" to call a tool (model vs Python) |
+| `section_1/05_multi_tools.py` | Multiple tools, model chooses which one, `calculate`, `get_time` | Add a new tool yourself without help |
+| `section_1/06_structured_output.py` | JSON-only responses, `json.loads`, retry on parse failure | Get reliable `{"city": "Tokyo"}` from a messy model |
+| `section_1/06_appendix_bad_prompt.py` | Same parser, vague system prompt (optional) | Compare `[json attempt N]` counts vs the good prompt |
 
 **The agent loop** (memorize this):
 
@@ -345,14 +370,15 @@ while True:
 
 *Goal: make agents useful and resilient, not just demo-ready.*
 
-| File | Concepts | Checkpoint |
-|------|----------|------------|
-| `07_errors.py` | Tool exceptions → Observation, max retry count | Agent recovers when `get_weather("")` fails |
-| `08_context.py` | Context window, token counting (rough), trim/summarize old turns | Agent still works after 30+ turns |
-| `09_planning.py` | Plan-then-execute, step list before tool calls | "Research X and write a summary" → visible plan |
-| `10_file_agent.py` | `read_file`, `list_dir`, `grep` tools | Answer questions about a local `.md` folder |
-| `11_web_agent.py` | `fetch_url` tool, trust boundaries, timeouts | Summarize a public URL safely |
-| `12_sub_agents.py` | Researcher + writer roles, manager orchestration | Two personas collaborate on one task |
+| File | Status | Concepts | Checkpoint |
+|------|--------|----------|------------|
+| `section_2/07_error_handling.py` | ✅ | Tool exceptions → Observation, `MAX_TOOL_ROUNDS`, connection errors | Agent recovers when `get_weather("")` fails |
+| `section_2/08a_token_estimate.py` | ✅ | `estimate_tokens`, log prompt size vs 8192 context window | Explain why you measure before trimming |
+| `section_2/08b_context_management.py` | ✅ | `trim_history`, `MAX_HISTORY_TOKENS` soft budget | Agent still works after many turns |
+| `section_2/09_planning.py` | planned | Plan-then-execute, step list before tool calls | "Research X and write a summary" → visible plan |
+| `section_2/10_file_agent.py` | planned | `read_file`, `list_dir`, `grep` tools | Answer questions about a local `.md` folder |
+| `section_2/11_web_agent.py` | planned | `fetch_url` tool, trust boundaries, timeouts | Summarize a public URL safely |
+| `section_2/12_sub_agents.py` | planned | Researcher + writer roles, manager orchestration | Two personas collaborate on one task |
 
 **Phase 3 checkpoint:** File-search agent answers "What does notes/todo.md say about agents?" using only tools, no hallucination.
 
@@ -362,23 +388,25 @@ while True:
 
 *Goal: ship something you'd trust beyond a demo.*
 
-| File | Concepts | Checkpoint |
-|------|----------|------------|
-| `13_logging.py` | Log every LLM call, tool call, observation with timestamps | Reproduce a full agent trace from logs |
-| `14_human_in_loop.py` | Confirm before destructive tools (write, delete) | Agent asks before writing a file |
-| `15_persistence.py` | SQLite for history + state across runs | Resume a conversation after restart |
-| `16_evaluation.py` | Test cases, pass/fail scoring | Run 5 prompts, report success rate |
-| `17_capstone.py` | Full research assistant (see [Capstone](#11-capstone-project)) | Demo end-to-end to someone else |
+| File | Status | Concepts | Checkpoint |
+|------|--------|----------|------------|
+| `section_2/13_logging.py` | planned | Log every LLM call, tool call, observation with timestamps | Reproduce a full agent trace from logs |
+| `section_2/14_human_in_loop.py` | planned | Confirm before destructive tools (write, delete) | Agent asks before writing a file |
+| `section_2/15_persistence.py` | planned | SQLite for history + state across runs | Resume a conversation after restart |
+| `section_2/16_evaluation.py` | planned | Test cases, pass/fail scoring | Run 5 prompts, report success rate |
+| `section_2/17_capstone.py` | planned | Full research assistant (see [Capstone](#11-capstone-project)) | Demo end-to-end to someone else |
 
 **Optional finale:** Rebuild one lesson with LangGraph or OpenAI Agents SDK. You should recognize every step the framework automates.
 
 ---
 
-### Appendix — optional deep dives
+### Lesson status
 
-| File | Concepts |
-|------|----------|
-| `A1_chat_stream_visualization.py` | Inspect bytes vs str at each layer of the HTTP pipeline |
+| Section | Lessons | Status |
+|---------|---------|--------|
+| `section_1/` | 01–06 (+ appendix) | ✅ complete |
+| `section_2/` | 07–08b | ✅ complete |
+| `section_2/` | 09–17 | planned — add to `section_2/` as you build them |
 
 ---
 
@@ -405,9 +433,10 @@ curl http://localhost:1234/v1/models
 ### Every study session
 
 ```bash
-lms server status             # 1. server running?
-lms ps                        # 2. model loaded?
-python3 0X_lesson.py          # 3. run today's lesson
+lms server status                          # 1. server running?
+lms ps                                     # 2. model loaded?
+python3 section_1/01_chat.py               # 3. run today's lesson (swap path as you progress)
+# e.g. python3 section_2/07_error_handling.py
 ```
 
 ### Useful `lms` commands
@@ -473,7 +502,7 @@ python3 0X_lesson.py          # 3. run today's lesson
 
 ## 11. Capstone project
 
-**Build a research assistant agent** (`17_capstone.py`).
+**Build a research assistant agent** (`section_2/17_capstone.py`, planned).
 
 ### Requirements
 
@@ -487,12 +516,12 @@ python3 0X_lesson.py          # 3. run today's lesson
 ### Skills used
 
 ```
-03_conversation  →  memory
-04_tools         →  tool loop
-07_errors        →  resilience
-09_planning      →  step breakdown
-10_file_agent    →  file tools
-13_logging       →  observability
+section_1/03_conversation     →  memory
+section_1/04_tools            →  tool loop
+section_2/07_error_handling   →  resilience
+09_planning                   →  step breakdown (planned)
+10_file_agent                 →  file tools (planned)
+13_logging                    →  observability (planned)
 ```
 
 ### Success criteria
