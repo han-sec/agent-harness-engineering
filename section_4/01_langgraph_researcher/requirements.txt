@@ -1,0 +1,5 @@
+# Section 4 — LangGraph track (not stdlib-only)
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+mcp>=1.0.0
