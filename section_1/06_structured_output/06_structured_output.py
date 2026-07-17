@@ -1,5 +1,5 @@
 # Step 7: structured output. Get reliable JSON from a messy model.
-# Appendix A/B test: run 06_appendix_bad_prompt.py — same parser, vague prompt (no example).
+# Appendix A/B test: run section_1/06_appendix_bad_prompt/06_appendix_bad_prompt.py — same parser, vague prompt.
 import json          # parse model replies and build HTTP request bodies
 import re            # strip markdown code fences from model output
 import urllib.request  # make HTTP calls without extra libraries

@@ -1,4 +1,4 @@
-# Appendix to 06: BAD prompt on purpose — compare with 06_structured_output.py
+# Appendix to 06: BAD prompt on purpose — compare with section_1/06_structured_output/06_structured_output.py
 #
 # Same parsing code. Only the system prompt is vague (no format line, no example).
 # Run both scripts with the same question and count [json attempt N] lines.
