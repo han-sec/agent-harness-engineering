@@ -13,25 +13,39 @@ This document is the single source of truth for the course. Every lesson, concep
 
 ### Repository layout
 
-Lessons live in two folders — work through `section_1` in order, then `section_2`:
+Lessons live in two sections — each lesson has its own folder with a README and script. Work through `section_1` in order, then `section_2`:
 
 ```
 section_1/          # Lessons 01–06 — LLM mechanics + agent loop
-  01_chat.py
-  02_stream.py
-  03_conversation.py
-  04_tools.py
-  05_multi_tools.py
-  06_structured_output.py
-  06_appendix_bad_prompt.py   # optional — same lesson, vague prompt (compare parse success)
+  01_chat/
+    README.md
+    01_chat.py
+  02_stream/
+  03_conversation/
+  04_tools/
+  05_multi_tools/
+  06_structured_output/
+  06_appendix_bad_prompt/   # optional — same lesson, vague prompt (compare parse success)
 
 section_2/          # Lessons 07+ — errors, context, files, production (as you add them)
-  07_error_handling.py
-  08a_token_estimate.py
-  08b_context_management.py
+  07_error_handling/
+  08a_token_estimate/
+  08b_context_management/
+  09_planning/
+  10_file_agent/
+  11_web_agent/
+  12_sub_agents/
+  13_logging/
+  14_human_in_loop/
+  15_persistence/
+  16_evaluation/
 ```
 
-See [AGENTS.md](AGENTS.md) for conventions when adding new lessons.
+Open a lesson's `README.md` for concepts, checkpoints, and run instructions. See [AGENTS.md](AGENTS.md) for conventions when adding new lessons.
+
+**Section 2 arc:** lessons 07–16 teach one concept each (web-only in 11, file-only in 10). **Lesson 17 capstone** combines them into one full agent.
+
+**Section 3 arc:** lesson 18+ — MCP tool servers, deploy, and wiring MCP into the harness.
 
 ---
 
@@ -155,7 +169,7 @@ flowchart TB
 
 ### Common confusion
 
-| State | Can you chat in the app? | Can `section_1/01_chat.py` work? |
+| State | Can you chat in the app? | Can `section_1/01_chat/01_chat.py` work? |
 |-------|--------------------------|------------------------|
 | App open, nothing loaded | ❌ | ❌ |
 | Model loaded, server **off** | ✅ (`lms chat` works) | ❌ Connection refused |
@@ -220,7 +234,7 @@ sequenceDiagram
 | Your code (parsed) | `str` | `"Hi"` → joined into `"Hi there!"` |
 | Tool result | `str` | `"Sunny, 28°C in Tokyo"` → fed back as Observation |
 
-**You never see token IDs** in this course. The API abstracts them into text. Lesson `08a_token_estimate.py` introduces a rough token count so you can see prompt size before trimming.
+**You never see token IDs** in this course. The API abstracts them into text. Lesson [08a — Token estimate](section_2/08a_token_estimate/README.md) introduces a rough token count so you can see prompt size before trimming.
 
 ### Chatbot vs agent pipeline
 
@@ -331,9 +345,9 @@ flowchart LR
 
 | File | Concepts | Checkpoint |
 |------|----------|------------|
-| `section_1/01_chat.py` | HTTP POST, JSON body, `messages` roles, `temperature`, reading `choices[0].message.content` | Explain the request body fields without looking at code |
-| `section_1/02_stream.py` | `stream: true`, SSE format, `data: {json}`, `data: [DONE]`, printing tokens live | Describe why streaming feels faster even though total time is similar |
-| `section_1/03_conversation.py` | `history` list, appending user/assistant messages, sending full history each call | Explain why the model "remembers" without any database |
+| [01_chat](section_1/01_chat/README.md) | HTTP POST, JSON body, `messages` roles, `temperature`, reading `choices[0].message.content` | Explain the request body fields without looking at code |
+| [02_stream](section_1/02_stream/README.md) | `stream: true`, SSE format, `data: {json}`, `data: [DONE]`, printing tokens live | Describe why streaming feels faster even though total time is similar |
+| [03_conversation](section_1/03_conversation/README.md) | `history` list, appending user/assistant messages, sending full history each call | Explain why the model "remembers" without any database |
 
 **Phase 1 checkpoint:** Trace this path from memory: `dict` → `json.dumps` → `bytes` → HTTP → SSE chunks → `str` → print.
 
@@ -345,10 +359,10 @@ flowchart LR
 
 | File | Concepts | Checkpoint |
 |------|----------|------------|
-| `section_1/04_tools.py` | Tool functions, `TOOLS` registry, system prompt contract, `TOOL:name:arg`, agent inner loop, `Observation`, defensive `re.search` | Explain who "decides" to call a tool (model vs Python) |
-| `section_1/05_multi_tools.py` | Multiple tools, model chooses which one, `calculate`, `get_time` | Add a new tool yourself without help |
-| `section_1/06_structured_output.py` | JSON-only responses, `json.loads`, retry on parse failure | Get reliable `{"city": "Tokyo"}` from a messy model |
-| `section_1/06_appendix_bad_prompt.py` | Same parser, vague system prompt (optional) | Compare `[json attempt N]` counts vs the good prompt |
+| [04_tools](section_1/04_tools/README.md) | Tool functions, `TOOLS` registry, system prompt contract, `TOOL:name:arg`, agent inner loop, `Observation`, defensive `re.search` | Explain who "decides" to call a tool (model vs Python) |
+| [05_multi_tools](section_1/05_multi_tools/README.md) | Multiple tools, model chooses which one, `calculate`, `get_time` | Add a new tool yourself without help |
+| [06_structured_output](section_1/06_structured_output/README.md) | JSON-only responses, `json.loads`, retry on parse failure | Get reliable `{"city": "Tokyo"}` from a messy model |
+| [06_appendix_bad_prompt](section_1/06_appendix_bad_prompt/README.md) | Same parser, vague system prompt (optional) | Compare `[json attempt N]` counts vs the good prompt |
 
 **The agent loop** (memorize this):
 
@@ -372,13 +386,13 @@ while True:
 
 | File | Status | Concepts | Checkpoint |
 |------|--------|----------|------------|
-| `section_2/07_error_handling.py` | ✅ | Tool exceptions → Observation, `MAX_TOOL_ROUNDS`, connection errors | Agent recovers when `get_weather("")` fails |
-| `section_2/08a_token_estimate.py` | ✅ | `estimate_tokens`, log prompt size vs 8192 context window | Explain why you measure before trimming |
-| `section_2/08b_context_management.py` | ✅ | `trim_history`, `MAX_HISTORY_TOKENS` soft budget | Agent still works after many turns |
-| `section_2/09_planning.py` | planned | Plan-then-execute, step list before tool calls | "Research X and write a summary" → visible plan |
-| `section_2/10_file_agent.py` | planned | `read_file`, `list_dir`, `grep` tools | Answer questions about a local `.md` folder |
-| `section_2/11_web_agent.py` | planned | `fetch_url` tool, trust boundaries, timeouts | Summarize a public URL safely |
-| `section_2/12_sub_agents.py` | planned | Researcher + writer roles, manager orchestration | Two personas collaborate on one task |
+| [07_error_handling](section_2/07_error_handling/README.md) | ✅ | Tool exceptions → Observation, `MAX_TOOL_ROUNDS`, connection errors | Agent recovers when `get_weather("")` fails |
+| [08a_token_estimate](section_2/08a_token_estimate/README.md) | ✅ | `estimate_tokens`, log prompt size vs 8192 context window | Explain why you measure before trimming |
+| [08b_context_management](section_2/08b_context_management/README.md) | ✅ | `trim_history`, `MAX_HISTORY_TOKENS` soft budget | Agent still works after many turns |
+| [09_planning](section_2/09_planning/README.md) | ✅ | Plan-then-execute, JSON plan, guard rail (no tools in plan phase) | "Compare weather in Tokyo and London" → visible plan before `[tool]` |
+| [10_file_agent](section_2/10_file_agent/README.md) | ✅ | `read_file`, `list_dir`, `grep`, `safe_path()` sandbox | Answer from `notes/todo.md` using tools only |
+| [11_web_agent](section_2/11_web_agent/README.md) | ✅ | `fetch_url`, URL allowlist, timeouts, HTML→text | Summarize `https://example.com` safely |
+| [12_sub_agents](section_2/12_sub_agents/README.md) | ✅ | Researcher + writer, Python manager, isolated histories | User question → researcher tools → writer answer |
 
 **Phase 3 checkpoint:** File-search agent answers "What does notes/todo.md say about agents?" using only tools, no hallucination.
 
@@ -390,11 +404,14 @@ while True:
 
 | File | Status | Concepts | Checkpoint |
 |------|--------|----------|------------|
-| `section_2/13_logging.py` | planned | Log every LLM call, tool call, observation with timestamps | Reproduce a full agent trace from logs |
-| `section_2/14_human_in_loop.py` | planned | Confirm before destructive tools (write, delete) | Agent asks before writing a file |
-| `section_2/15_persistence.py` | planned | SQLite for history + state across runs | Resume a conversation after restart |
-| `section_2/16_evaluation.py` | planned | Test cases, pass/fail scoring | Run 5 prompts, report success rate |
-| `section_2/17_capstone.py` | planned | Full research assistant (see [Capstone](#11-capstone-project)) | Demo end-to-end to someone else |
+| [13_logging](section_2/13_logging/README.md) | ✅ | `log_event()`, JSONL file, `run_id` per turn | Reproduce a full agent trace from logs |
+| [14_human_in_loop](section_2/14_human_in_loop/README.md) | ✅ | `confirm_action()`, `write_file` with approval gate | Agent asks before writing a file |
+| [15_persistence](section_2/15_persistence/README.md) | ✅ | SQLite `save_turn` / `load_recent_turns` | Resume a conversation after restart |
+| [16_evaluation](section_2/16_evaluation/README.md) | ✅ | Test cases, pass/fail scoring, `--self-test` meta-eval | Run 5 prompts, report success rate |
+| [17_capstone](section_2/17_capstone/README.md) | ✅ | Plan → research (file+web) → write → HITL → persist → eval | Demo Internal Docs Q&A end-to-end |
+| [18_mcp](section_3/18_mcp/README.md) | ✅ | stdio MCP server + `docs/*.md` + smoke test | Run `18_mcp.py`, connect to Cursor |
+| [19_mcp_client](section_3/19_mcp_client/README.md) | ✅ | Capstone harness calls docs MCP over stdio | Run `19_mcp_client.py`, see `[researcher] mcp` |
+| [22_langgraph](section_3/22_langgraph/README.md) | ✅ | Researcher inner loop as LangGraph StateGraph | Compare graph vs lesson 19 `while` loop |
 
 **Optional finale:** Rebuild one lesson with LangGraph or OpenAI Agents SDK. You should recognize every step the framework automates.
 
@@ -405,8 +422,10 @@ while True:
 | Section | Lessons | Status |
 |---------|---------|--------|
 | `section_1/` | 01–06 (+ appendix) | ✅ complete |
-| `section_2/` | 07–08b | ✅ complete |
-| `section_2/` | 09–17 | planned — add to `section_2/` as you build them |
+| `section_2/` | 07–17 | ✅ complete |
+| `section_3/18_mcp/` | ✅ | **MCP server** — employee docs as stdio tools |
+| `section_3/19_mcp_client/` | ✅ | **MCP client** — capstone researcher via stdio |
+| `section_3/22_langgraph/` | ✅ | **LangGraph** — researcher loop as StateGraph |
 
 ---
 
@@ -433,10 +452,10 @@ curl http://localhost:1234/v1/models
 ### Every study session
 
 ```bash
-lms server status                          # 1. server running?
-lms ps                                     # 2. model loaded?
-python3 section_1/01_chat.py               # 3. run today's lesson (swap path as you progress)
-# e.g. python3 section_2/07_error_handling.py
+lms server status                                    # 1. server running?
+lms ps                                               # 2. model loaded?
+python3 section_1/01_chat/01_chat.py                 # 3. run today's lesson (swap path as you progress)
+# e.g. python3 section_2/09_planning/09_planning.py
 ```
 
 ### Useful `lms` commands
@@ -502,32 +521,53 @@ python3 section_1/01_chat.py               # 3. run today's lesson (swap path as
 
 ## 11. Capstone project
 
-**Build a research assistant agent** (`section_2/17_capstone.py`, planned).
+**Build an Internal Docs Q&A agent** ([section_2/17_capstone/](section_2/17_capstone/README.md)).
+
+Combines section 2 into one agent: planning (09), file tools (10), web fetch (11), sub-agents (12), logging (13), HITL (14), persistence (15), and eval (16).
+
+### Pipeline
+
+```
+User question → planner (JSON plan) → researcher (grep/read/fetch) → writer (cited answer)
+  → HITL save to output/answer.md → SQLite session → JSONL logs
+```
 
 ### Requirements
 
-1. User asks a research question
-2. Agent plans steps (visible in logs)
-3. Searches a local folder of `.md` files with `grep` or text search
-4. Reads relevant files
-5. Writes a summary to `output.md`
-6. Logs every LLM call, tool call, and observation
+1. User asks about internal docs in `workspace/docs/`
+2. Planner emits a JSON plan (no tools during plan phase)
+3. Researcher uses `list_dir`, `grep`, `read_file`, and optionally `fetch_url`
+4. Writer produces a cited answer from researcher facts only
+5. Human approves before writing to `output/answer.md`
+6. Logs every LLM call, tool call, handoff, and approval in `logs/agent.jsonl`
+7. Eval mode runs `test_cases.json` with deterministic scoring
+
+### Run
+
+```bash
+python3 section_2/17_capstone/17_capstone.py              # interactive
+python3 section_2/17_capstone/17_capstone.py --eval       # automated eval
+python3 section_2/17_capstone/17_capstone.py --self-test  # scorer meta-eval
+```
 
 ### Skills used
 
 ```
-section_1/03_conversation     →  memory
-section_1/04_tools            →  tool loop
-section_2/07_error_handling   →  resilience
-09_planning                   →  step breakdown (planned)
-10_file_agent                 →  file tools (planned)
-13_logging                    →  observability (planned)
+section_2/09_planning/          →  plan-then-execute
+section_2/10_file_agent/        →  file tools + sandbox
+section_2/11_web_agent/         →  fetch_url + allowlist
+section_2/12_sub_agents/        →  Python manager + isolated sub-agents
+section_2/13_logging/           →  JSONL observability
+section_2/14_human_in_loop/     →  approval gate
+section_2/15_persistence/       →  SQLite session memory
+section_2/16_evaluation/        →  test cases + scoring
+section_2/17_capstone/          →  combined agent
 ```
 
 ### Success criteria
 
-- [ ] Answers from file content, not hallucination
-- [ ] Handles missing files gracefully
-- [ ] Produces a readable `output.md`
-- [ ] Full trace in logs for debugging
-- [ ] Demo-able in under 5 minutes
+- [x] Answers grounded in `workspace/docs/` content, not hallucination
+- [x] Handles missing files gracefully (error observations)
+- [x] Produces a readable saved answer after HITL approval
+- [x] Full trace in JSONL logs for debugging
+- [x] Eval suite with pass/fail reporting

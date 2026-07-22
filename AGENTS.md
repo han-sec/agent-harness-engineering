@@ -22,23 +22,42 @@ Every lesson is the same pipeline: **your Python** sends messages over HTTP → 
 
 ### Folder layout
 
+Each lesson lives in its own folder with a **README** (what it teaches) and a **script** (runnable code):
+
 ```
 section_1/          # Lessons 01–06 — LLM mechanics + agent loop
-  01_chat.py
-  02_stream.py
-  03_conversation.py
-  04_tools.py
-  05_multi_tools.py
-  06_structured_output.py
-  06_appendix_bad_prompt.py   # optional — same lesson, vague prompt (compare parse success)
+  01_chat/
+    README.md
+    01_chat.py
+  02_stream/
+  03_conversation/
+  04_tools/
+  05_multi_tools/
+  06_structured_output/
+  06_appendix_bad_prompt/   # optional — same lesson, vague prompt (compare parse success)
 
 section_2/          # Lessons 07+ — errors, context, files, production (as you add them)
-  07_error_handling.py
-  08a_token_estimate.py
-  08b_context_management.py
+  07_error_handling/
+  08a_token_estimate/
+  08b_context_management/
+  09_planning/
+  10_file_agent/
+  11_web_agent/
+  12_sub_agents/
+  13_logging/
+  14_human_in_loop/
+  15_persistence/
+  16_evaluation/
+  17_capstone/              # combines 09–16 — Internal Docs Q&A
+
+section_3/          # Post-capstone — MCP, LangGraph, deploy
+  18_mcp/
+  19_mcp_client/
+  22_langgraph/
+  18_mcp/                   # stdio MCP server for employee docs
 ```
 
-Work through `section_1` in order. Each file builds on the previous one.
+Work through `section_1` in order. Open each folder's README before running the script.
 
 ---
 
@@ -58,6 +77,16 @@ Each script adds **exactly one new idea**. Copy the previous lesson and extend i
 | `07_errors` | Tool errors → Observation, `try/except`, `MAX_TOOL_ROUNDS` |
 | `08a_token_estimate` | `estimate_tokens`, log prompt size vs 8192 context |
 | `08b_context_management` | `trim_history`, `MAX_HISTORY_TOKENS` soft budget |
+| `09_planning` | Plan-then-execute phases, `parse_plan`, guard rail (no tools in plan phase) |
+| `10_file_agent` | `read_file`, `list_dir`, `grep`, `safe_path()` sandbox, read-only |
+| `11_web_agent` | `fetch_url`, `is_url_allowed()`, timeouts, HTML→text (web-only) |
+| `12_sub_agents` | `run_researcher` / `run_writer`, Python manager, isolated histories |
+| `13_logging` | `log_event()`, JSONL trace file, `run_id` per user turn |
+| `14_human_in_loop` | `confirm_action()`, approval gate before `write_file` |
+| `15_persistence` | `session_store`, SQLite turns across script restarts |
+| `16_evaluation` | `test_cases.json`, scorers, pass/fail report, `--self-test` |
+| `17_capstone` | Full pipeline: plan → research (file+web) → write → HITL → persist → eval |
+| `18_mcp` | stdio MCP server — tools backed by `docs/*.md`, smoke-test client |
 
 ### 2. Keep the flow simple
 
@@ -132,7 +161,8 @@ print(f"[json attempt {attempt}]")
 
 ### 9. Naming and files
 
-- Files: `NN_short_name.py` (e.g. `07_errors.py`)
+- One folder per lesson: `section_X/NN_short_name/` (e.g. `section_2/09_planning/`)
+- Each folder contains `README.md` + `NN_short_name.py`
 - Match README lesson numbers
 - `section_1` = through lesson 06; `section_2` starts at 07
 
@@ -141,7 +171,8 @@ print(f"[json attempt {attempt}]")
 - [ ] Read the previous lesson — extend, don't reinvent
 - [ ] One new concept only
 - [ ] Line comments on teaching moments
-- [ ] Runnable with `python3 section_X/NN_lesson.py` after `lms server start`
+- [ ] Runnable with `python3 section_X/NN_lesson/NN_lesson.py` after `lms server start`
+- [ ] Add or update the lesson folder's `README.md`
 - [ ] Update README status when the learner completes it
 
 ---
@@ -151,7 +182,7 @@ print(f"[json attempt {attempt}]")
 ```bash
 lms server status    # server running?
 lms ps               # model loaded?
-python3 section_1/06_structured_output.py
+python3 section_1/06_structured_output/06_structured_output.py
 ```
 
 ## Key terms
