@@ -1,0 +1,47 @@
+[
+  {
+    "id": "todo_harness",
+    "prompt": "What does notes/todo.md say about agents and harness engineering?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "todo.md"}
+    ],
+    "expect_answer_contains": ["harness", "todo.md"],
+    "expect_answer_not_contains": ["I don't have access"]
+  },
+  {
+    "id": "agents_definition",
+    "prompt": "According to notes/agents.md, what is an agent?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "agents.md"}
+    ],
+    "expect_answer_contains": ["agent", "agents.md"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "grep_agents",
+    "prompt": "Search notes for harness and summarize what you find.",
+    "expect_tools": [
+      {"tool": "grep", "arg_contains": "harness"}
+    ],
+    "expect_answer_contains": ["harness"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "list_notes",
+    "prompt": "What files are in the notes folder?",
+    "expect_tools": [
+      {"tool": "list_dir", "arg_contains": "notes"}
+    ],
+    "expect_answer_contains": ["agents.md", "todo.md"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "read_before_answer",
+    "prompt": "What file does todo.md say you should read before answering factual questions?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "todo.md"}
+    ],
+    "expect_answer_contains": ["read", "file"],
+    "expect_answer_not_contains": []
+  }
+]

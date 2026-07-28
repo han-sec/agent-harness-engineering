@@ -1,0 +1,48 @@
+[
+  {
+    "id": "fixture_tools_pass",
+    "description": "Scorer should pass when expected tool appears in mock log",
+    "mock_answer": "Harness engineering is in notes/todo.md.",
+    "mock_events": [
+      {"event": "tool_call", "tool": "read_file", "arg": "notes/todo.md"}
+    ],
+    "expect_tools": [{"tool": "read_file", "arg_contains": "todo.md"}],
+    "expect_answer_contains": ["harness"],
+    "expect_answer_not_contains": [],
+    "expected_pass": true
+  },
+  {
+    "id": "fixture_tools_fail",
+    "description": "Scorer should fail when required tool is missing from mock log",
+    "mock_answer": "Harness engineering is in notes/todo.md.",
+    "mock_events": [
+      {"event": "tool_call", "tool": "list_dir", "arg": "notes"}
+    ],
+    "expect_tools": [{"tool": "read_file", "arg_contains": "todo.md"}],
+    "expect_answer_contains": ["harness"],
+    "expect_answer_not_contains": [],
+    "expected_pass": false
+  },
+  {
+    "id": "fixture_answer_fail",
+    "description": "Scorer should fail when answer missing required substring",
+    "mock_answer": "I cannot help with that.",
+    "mock_events": [
+      {"event": "tool_call", "tool": "read_file", "arg": "notes/todo.md"}
+    ],
+    "expect_tools": [],
+    "expect_answer_contains": ["harness"],
+    "expect_answer_not_contains": [],
+    "expected_pass": false
+  },
+  {
+    "id": "fixture_forbidden_phrase",
+    "description": "Scorer should fail when forbidden phrase appears in answer",
+    "mock_answer": "I don't have access to any files.",
+    "mock_events": [],
+    "expect_tools": [],
+    "expect_answer_contains": [],
+    "expect_answer_not_contains": ["don't have access"],
+    "expected_pass": false
+  }
+]

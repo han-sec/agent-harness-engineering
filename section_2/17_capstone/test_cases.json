@@ -1,0 +1,47 @@
+[
+  {
+    "id": "refund_window",
+    "prompt": "What is the refund window according to our refunds policy?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "refunds-policy"}
+    ],
+    "expect_answer_contains": ["14", "refund"],
+    "expect_answer_not_contains": ["I don't have access"]
+  },
+  {
+    "id": "onboarding_api",
+    "prompt": "What should new hires read before calling internal APIs?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "onboarding"}
+    ],
+    "expect_answer_contains": ["api-auth", "api"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "grep_deploy",
+    "prompt": "Search the docs for production deploy rules and summarize them.",
+    "expect_tools": [
+      {"tool": "grep", "arg_contains": "production"}
+    ],
+    "expect_answer_contains": ["deploy", "production"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "list_docs",
+    "prompt": "What internal doc files are available in the docs folder?",
+    "expect_tools": [
+      {"tool": "list_dir", "arg_contains": "docs"}
+    ],
+    "expect_answer_contains": ["onboarding.md", "refunds-policy.md"],
+    "expect_answer_not_contains": []
+  },
+  {
+    "id": "api_bearer",
+    "prompt": "How do you authenticate to the internal API?",
+    "expect_tools": [
+      {"tool": "read_file", "arg_contains": "api-auth"}
+    ],
+    "expect_answer_contains": ["Bearer", "Authorization"],
+    "expect_answer_not_contains": []
+  }
+]
