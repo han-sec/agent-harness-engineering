@@ -1,0 +1,1 @@
+Customers may request a full refund within **14 days** of purchase (refunds-policy.md, index.md). To be eligible for this refund during the 14-day window, customers must have consumed no more than 10% of their quota (refunds-policy.md).

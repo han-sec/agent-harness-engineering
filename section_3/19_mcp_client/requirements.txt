@@ -1,0 +1,6 @@
+# Lesson 19 — MCP client needs mcp package (same as lesson 18).
+# Setup (use python3 -m pip if plain `pip` is not found):
+#   python3 -m venv .venv
+#   source .venv/bin/activate
+#   python3 -m pip install -r requirements.txt
+mcp>=1.0.0
