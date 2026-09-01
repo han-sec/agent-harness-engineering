@@ -412,6 +412,7 @@ while True:
 | [18_mcp](section_3/18_mcp/README.md) | ✅ | stdio MCP server + `docs/*.md` + smoke test | Run `18_mcp.py`, connect to Cursor |
 | [19_mcp_client](section_3/19_mcp_client/README.md) | ✅ | Capstone harness calls docs MCP over stdio | Run `19_mcp_client.py`, see `[researcher] mcp` |
 | [22_langgraph](section_3/22_langgraph/README.md) | ✅ | Researcher inner loop as LangGraph StateGraph | Compare graph vs lesson 19 `while` loop |
+| [02a_embeddings](section_4/02a_embeddings/README.md) | ✅ | `embed()` via `/v1/embeddings`, `cosine()`, nomic doc/query prefixes | Rank 4 lessons by meaning when keyword overlap is 0.00 |
 
 **Optional finale:** Rebuild one lesson with LangGraph or OpenAI Agents SDK. You should recognize every step the framework automates.
 
@@ -426,6 +427,7 @@ while True:
 | `section_3/18_mcp/` | ✅ | **MCP server** — employee docs as stdio tools |
 | `section_3/19_mcp_client/` | ✅ | **MCP client** — capstone researcher via stdio |
 | `section_3/22_langgraph/` | ✅ | **LangGraph** — researcher loop as StateGraph |
+| `section_4/02a_embeddings/` | ✅ | **Embeddings** — text → 768-float vector, cosine similarity |
 
 ---
 
